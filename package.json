@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "npm install && node dist/server.js",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "build": "cd client && npm install && npm run build"
   },
   "dependencies": {
     "@types/express": "^4.17.13",
