@@ -1,4 +1,5 @@
 import express, { Application } from 'express';
+import type { Socket } from 'socket.io';
 const path = require('path');
 const app: Application = express();
 const socket = require('socket.io');
@@ -31,8 +32,24 @@ const io = socket(server, {
   },
 });
 
+declare namespace NodeJS {
+  interface Global {
+    authUser: Map<string, string>;
+    chatSocket: Socket;
+  }
+}
+declare const global: NodeJS.Global & typeof globalThis;
+
+global.authUser = new Map();
+
 io.on('connection', (socket: any) => {
-  socket.on('send-message', (data: { from: string; to: string; msg: string }) => {
-    io.emit('receive-message', data);
+  global.chatSocket = socket;
+  socket.on('add', (user: string) => {
+    global.authUser.set(user, socket.id);
+  });
+
+  socket.on('send-message', ({ to, msg }: { from: string; to: string; msg: string }) => {
+    const user = global.authUser.get(to);
+    if (user) io.to(user).emit('receive-message', msg);
   });
 });

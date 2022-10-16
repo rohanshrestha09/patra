@@ -27,14 +27,14 @@ const Inbox: React.FC<Props> = ({ inboxToggle, setInboxToggle, getId }) => {
   const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
+    socket && socket.emit('add', user._id);
+  }, [socket, user]);
+
+  useEffect(() => {
     socket &&
-      socket.on(
-        'receive-message',
-        ({ from, to, msg }: { from: string; to: string; msg: string }) => {
-          if (from === getId && to === user._id)
-            setRealTimeMessage((message: any) => [{ self: false, message: msg }, ...message]);
-        }
-      );
+      socket.on('receive-message', (msg: string) => {
+        setRealTimeMessage((message: any) => [{ self: false, message: msg }, ...message]);
+      });
     // eslint-disable-next-line
   }, [socket]);
 
@@ -62,14 +62,14 @@ const Inbox: React.FC<Props> = ({ inboxToggle, setInboxToggle, getId }) => {
   const handleSendMessage = useMutation(
     (data: { from: string; to: string; message: string }) => sendMessage(data),
     {
-      onSuccess: (data) => {
+      onSuccess: () => {
         socket &&
           socket.emit('send-message', {
             from: user && user._id,
             to: getId,
             msg: message,
           });
-        setRealTimeMessage((prev: any) => [{ self: true, message }, ...prev]);
+        setRealTimeMessage((prev) => [{ self: true, message }, ...prev]);
         setMessage('');
       },
     }
