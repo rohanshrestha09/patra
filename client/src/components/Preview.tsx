@@ -22,7 +22,7 @@ const Preview: React.FC<Props> = ({
   const { user, userLogout, isSuccess, refetch, isAlert, setIsAlert } =
     useContext<any>(userContext);
 
-  const searchRef = useRef() as any;
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] =
     useState<boolean>(false);
@@ -31,15 +31,17 @@ const Preview: React.FC<Props> = ({
 
   const [avatarImage, setAvatarImage] = useState<string[]>([]);
 
-  const [avatarSelectIndex, setAvatarSelectIndex] = useState<number>(NaN);
+  const [avatarSelectIndex, setAvatarSelectIndex] = useState<number>(NaN)
+
+  let timeout: any = 0
 
   const {
     data: allUsers,
     isLoading: isPreviewLoading,
     refetch: refetchAllUsers,
   } = useQuery({
-    queryFn: () => getAllUsers(user && user._id),
-    queryKey: ["allUsersData"],
+    queryFn: () => getAllUsers({ id: user && user._id, search: searchRef.current?.value }),
+    queryKey: ["allUsersData", searchRef.current?.value],
     enabled: !!isSuccess,
   });
 
@@ -108,9 +110,8 @@ const Preview: React.FC<Props> = ({
 
   return (
     <div
-      className={`${
-        inboxToggle ? "hidden" : "flex"
-      } h-full md:col-span-2 col-span-full md:flex flex-col gap-2 drop-shadow-lg z-10`}
+      className={`${inboxToggle ? "hidden" : "flex"
+        } h-full md:col-span-2 col-span-full md:flex flex-col gap-2 drop-shadow-lg z-10`}
     >
       <div className="w-full basis-20 flex justify-between items-center rounded-tl-lg px-4 shadow-lg">
         <p className="font-dev text-[#FF6A3D] text-7xl">kq</p>
@@ -145,7 +146,7 @@ const Preview: React.FC<Props> = ({
                 </span>
               </Dropdown.Header>
 
-              <Dropdown.Item onClick={() => searchRef.current.focus()}>
+              <Dropdown.Item onClick={() => searchRef.current?.focus()}>
                 New Message
               </Dropdown.Item>
               <Dropdown.Divider />
@@ -183,10 +184,9 @@ const Preview: React.FC<Props> = ({
                       src={`data:image/svg+xml;base64,${element}`}
                       alt="avatar"
                       key={index}
-                      className={`w-12 h-12 md:w-16 md:h-16 p-[0.2rem] rounded-full cursor-pointer ${
-                        index === avatarSelectIndex &&
+                      className={`w-12 h-12 md:w-16 md:h-16 p-[0.2rem] rounded-full cursor-pointer ${index === avatarSelectIndex &&
                         "border-[0.25rem] border-[#4e0eff]"
-                      }`}
+                        }`}
                       onClick={(): void => setAvatarSelectIndex(index)}
                     />
                   ))
@@ -251,14 +251,16 @@ const Preview: React.FC<Props> = ({
           placeholder="Search"
           ref={searchRef}
           className="w-full rounded-xl focus:outline-none focus:border-0 border-0"
-          // onChange={onChange}
+          onChange={() => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(refetchAllUsers, 500)
+          }}
         />
       </div>
 
       <div
-        className={`basis-[80%] flex flex-col overflow-scroll overflow-x-hidden px-3 ${
-          isPreviewLoading && "items-center justify-center"
-        }`}
+        className={`basis-[80%] flex flex-col overflow-scroll overflow-x-hidden px-3 ${isPreviewLoading && "items-center justify-center"
+          }`}
       >
         {isPreviewLoading ? (
           <Spinner size={"xl"} />

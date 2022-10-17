@@ -15,8 +15,8 @@ export const login = async (data) => {
   return res.data;
 };
 
-export const getAllUsers = async (id) => {
-  const res = await axios.get(`/api/users/${id}`);
+export const getAllUsers = async ({ id, search }) => {
+  const res = await axios.get(`/api/users/${id}?search=${search || ''}`);
   return res.data;
 };
 

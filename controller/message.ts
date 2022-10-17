@@ -14,12 +14,12 @@ module.exports.getMessage = asyncHandler(
         },
       }).sort({ updatedAt: -1 });
 
-      const messagesData = messages.map((element: any) => {
-        return {
-          self: element.sender.toString() === from.toString(),
-          message: element.message,
-        };
-      });
+      const messagesData = messages.map((element: { sender: string, message: string }) =>
+      ({
+        self: element.sender.toString() === from.toString(),
+        message: element.message,
+      })
+      );
       return res.status(201).json(messagesData);
     } catch (err: any) {
       return res.status(400).json(err.message);

@@ -19,12 +19,10 @@ module.exports.getMessage = asyncHandler((req, res) => __awaiter(void 0, void 0,
                 $all: [from, to],
             },
         }).sort({ updatedAt: -1 });
-        const messagesData = messages.map((element) => {
-            return {
-                self: element.sender.toString() === from.toString(),
-                message: element.message,
-            };
-        });
+        const messagesData = messages.map((element) => ({
+            self: element.sender.toString() === from.toString(),
+            message: element.message,
+        }));
         return res.status(201).json(messagesData);
     }
     catch (err) {

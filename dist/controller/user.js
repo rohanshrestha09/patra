@@ -64,10 +64,12 @@ module.exports.login = asyncHandler((req, res) => __awaiter(void 0, void 0, void
 }));
 module.exports.getAllUsers = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    const { search } = req.query;
+    let query = { _id: { $ne: new mongoose_1.default.Types.ObjectId(id) } };
+    if (search)
+        query = Object.assign({ $text: { $search: String(search).toLowerCase() } }, query);
     try {
-        const allUsers = yield User.find({
-            _id: { $ne: new mongoose_1.default.Types.ObjectId(id) },
-        })
+        const allUsers = yield User.find(query)
             .select("-password")
             .sort({ createdAt: 1 });
         return res.status(201).json(allUsers);

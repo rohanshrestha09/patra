@@ -9,7 +9,7 @@ module.exports.register = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
     const { fullname, email, password, confirmpassword } = req.body;
 
-    const emailExists: {} = await User.findOne({ email });
+    const emailExists = await User.findOne({ email });
 
     if (emailExists) return res.status(400).json("Email already exists");
 
@@ -68,10 +68,14 @@ module.exports.login = asyncHandler(
 module.exports.getAllUsers = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
+    const { search } = req.query;
+
+    let query = { _id: { $ne: new mongoose.Types.ObjectId(id) } }
+
+    if (search) query = Object.assign({ $text: { $search: String(search).toLowerCase() } }, query)
+
     try {
-      const allUsers = await User.find({
-        _id: { $ne: new mongoose.Types.ObjectId(id) },
-      })
+      const allUsers = await User.find(query)
         .select("-password")
         .sort({ createdAt: 1 });
       return res.status(201).json(allUsers);
