@@ -38,6 +38,7 @@ const Preview: React.FC<Props> = ({
   const {
     data: allUsers,
     isLoading: isPreviewLoading,
+    isRefetching: isPreviewRefetching,
     refetch: refetchAllUsers,
   } = useQuery({
     queryFn: () => getAllUsers({ id: user && user._id, search: searchRef.current?.value }),
@@ -259,10 +260,10 @@ const Preview: React.FC<Props> = ({
       </div>
 
       <div
-        className={`basis-[80%] flex flex-col overflow-scroll overflow-x-hidden px-3 ${isPreviewLoading && "items-center justify-center"
+        className={`basis-[80%] flex flex-col overflow-scroll overflow-x-hidden px-3 ${(isPreviewLoading || isPreviewRefetching) && "items-center justify-center"
           }`}
       >
-        {isPreviewLoading ? (
+        {(isPreviewLoading || isPreviewRefetching) ? (
           <Spinner size={"xl"} />
         ) : (
           <>
