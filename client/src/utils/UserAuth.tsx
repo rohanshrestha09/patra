@@ -1,8 +1,8 @@
-import UserContext from './userContext';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../api';
-import { useState } from 'react';
+import UserContext from './userContext';
 
 const UserAuth: React.FC<{ children: React.ReactNode }> = ({ children }): JSX.Element => {
   const navigate = useNavigate();

@@ -15,7 +15,7 @@ const User = require('../model/user');
 module.exports = asyncHandler((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const [_, token] = ((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.startsWith('Bearer'))
-        ? req.headers.authorization.split(' ')[1]
+        ? req.headers.authorization.split(' ')
         : [];
     if (!token)
         return res.status(400).json('Not authorised');

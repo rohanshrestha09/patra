@@ -6,7 +6,7 @@ const User = require('../model/user');
 module.exports = asyncHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     const [_, token] = req.headers.authorization?.startsWith('Bearer')
-      ? req.headers.authorization.split(' ')[1]
+      ? req.headers.authorization.split(' ')
       : [];
 
     if (!token) return res.status(400).json('Not authorised');
