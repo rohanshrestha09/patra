@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node dist/server.js",
-    "build": "npm install && tsc --project tsconfig.json && cd client && npm install && npm run build"
+    "build": "npm install && cd client && npm install && npm run build"
   },
   "dependencies": {
     "@types/express": "^4.17.13",
