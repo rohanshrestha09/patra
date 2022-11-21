@@ -28,7 +28,7 @@ module.exports.register = asyncHandler(async (req: Request, res: Response): Prom
     });
 
     const token: string = jwt.sign({ id: user._id }, process.env.JWT_TOKEN, {
-      expiresIn: '90min',
+      expiresIn: '30d',
     });
 
     return res.status(200).json({ message: 'Signup Successful', token });
@@ -50,7 +50,7 @@ module.exports.login = asyncHandler(async (req: Request, res: Response): Promise
     if (!isMatched) return res.status(400).json('Incorrect Password');
 
     const token: string = jwt.sign({ id: user._id }, process.env.JWT_TOKEN, {
-      expiresIn: '90min',
+      expiresIn: '30d',
     });
 
     if (isMatched) return res.status(200).json({ message: 'Login Successful', token });

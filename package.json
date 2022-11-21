@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "npm install && node dist/server.js",
-    "build": "cd client && npm install && npm run build"
+    "start": "node dist/server.js",
+    "build": "npm install && tsc --project tsconfig.json && cd client && npm install && npm run build"
   },
   "dependencies": {
     "@types/express": "^4.17.13",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.16",
-    "typescript": "^4.7.3"
+    "typescript": "^4.7.3",
+    "ts-node": "^10.9.1"
   }
 }

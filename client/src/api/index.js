@@ -1,17 +1,29 @@
-import axios from "../axios";
+import Axios from 'axios';
+
+const axios = Axios.create();
+
+axios.interceptors.request.use(
+  (config) => {
+    const authToken = localStorage.getItem('token');
+
+    config.headers['Authorization'] = 'Bearer ' + authToken;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export const auth = async () => {
-  const res = await axios.get("/api/protected");
+  const res = await axios.get('/api/protected');
   return res.data;
 };
 
 export const signup = async (data) => {
-  const res = await axios.post("/api/signup", data);
+  const res = await axios.post('/api/signup', data);
   return res.data;
 };
 
 export const login = async (data) => {
-  const res = await axios.post("/api/login", data);
+  const res = await axios.post('/api/login', data);
   return res.data;
 };
 
@@ -31,12 +43,12 @@ export const deleteUser = async (id) => {
 };
 
 export const sendMessage = async (data) => {
-  const res = await axios.post("/api/addmsg", data);
+  const res = await axios.post('/api/addmsg', data);
   return res.data;
 };
 
 export const getMessage = async (data) => {
-  const res = await axios.post("/api/getmsg", data);
+  const res = await axios.post('/api/getmsg', data);
   return res.data;
 };
 

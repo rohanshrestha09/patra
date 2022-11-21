@@ -1,28 +1,34 @@
 import express, { Application } from 'express';
+import mongoose from 'mongoose';
 import type { Socket } from 'socket.io';
-const path = require('path');
-const app: Application = express();
-const socket = require('socket.io');
-require('dotenv').config({ path: __dirname + '/.env' });
 
-app.use(express.urlencoded({ extended: false }));
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const connectDB = require('./db');
-app.use(express.static(path.resolve(__dirname, '..', 'client/build')));
+const socket = require('socket.io');
+
+require('dotenv').config({ path: __dirname + '/.env' });
+
+const app: Application = express();
 
 const PORT: any = process.env.PORT || 5000;
+
+app.use(express.static(path.resolve(__dirname, '..', 'client/build')));
+
 app.use(express.urlencoded({ extended: false }));
+
 app.use(cors());
+
 app.use(bodyParser.json());
 
-connectDB();
+mongoose.connect(process.env.MONGODB_URI as string);
 
 app.use('/api', require('./routes/user'));
+
 app.use('/api', require('./routes/message'));
+
 app.use('/api', require('./routes/protected'));
 
-app.set('port', PORT);
 const server = app.listen(PORT);
 
 const io = socket(server, {
@@ -38,6 +44,7 @@ declare namespace NodeJS {
     chatSocket: Socket;
   }
 }
+
 declare const global: NodeJS.Global & typeof globalThis;
 
 global.authUser = new Map();
