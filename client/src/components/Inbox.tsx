@@ -208,7 +208,7 @@ const Inbox: React.FC<Props> = ({
                 </div>
               ))}
 
-            {messages?.data.length < messages?.count && (
+            {size < messages?.count && (
               <div
                 ref={loaderRef}
                 className="flex w-full items-center justify-center"

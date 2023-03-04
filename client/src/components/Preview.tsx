@@ -307,7 +307,7 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
             ))}
           </div>
         ) : (
-          users?.data.length < users?.count && (
+          size < users?.count && (
             <div className="flex w-full items-center justify-center mt-2">
               <Button onClick={() => setSize((prev) => prev + 10)}>
                 Load more
