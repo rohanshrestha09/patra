@@ -42,7 +42,7 @@ module.exports.add = asyncHandler(
     try {
       await Message.create({
         message,
-        users: [auth, to],
+        users: [auth.toString(), to],
         sender: auth,
       });
 

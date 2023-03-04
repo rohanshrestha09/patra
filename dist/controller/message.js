@@ -40,7 +40,7 @@ module.exports.add = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0
     try {
         yield Message.create({
             message,
-            users: [auth, to],
+            users: [auth.toString(), to],
             sender: auth,
         });
         return res.sendStatus(201);

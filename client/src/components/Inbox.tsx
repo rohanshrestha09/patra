@@ -45,7 +45,7 @@ const Inbox: React.FC<Props> = ({
     socket &&
       socket.on("receive-message", (msg: string) => {
         setClientMessages((message: any) => [
-          { sender: user._id, message: msg },
+          { sender: userId, message: msg },
           ...message,
         ]);
       });

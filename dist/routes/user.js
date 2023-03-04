@@ -9,6 +9,6 @@ router.post("/login", login);
 router.use(auth);
 router.get("/user", users);
 router.get("/user/:user", user);
-router.put("/avatar/:user", setAvatar);
+router.put("/avatar", setAvatar);
 router.delete("/delete/:user", deleteUser);
 module.exports = router;

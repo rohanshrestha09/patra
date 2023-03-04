@@ -68,7 +68,7 @@ module.exports.login = asyncHandler(
 
 module.exports.users = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
-    const { auth } = res.locals.user;
+    const { _id: auth } = res.locals.user;
 
     const { search, size } = req.query;
 
@@ -118,7 +118,7 @@ module.exports.user = asyncHandler(
 
 module.exports.setAvatar = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
-    const { auth } = res.locals.user;
+    const { _id: auth } = res.locals.user;
 
     const { imgUrl } = req.body;
 
@@ -134,7 +134,7 @@ module.exports.setAvatar = asyncHandler(
 
 module.exports.deleteUser = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
-    const { auth } = res.locals.user;
+    const { _id: auth } = res.locals.user;
 
     try {
       await User.findOneAndDelete({ _id: auth });

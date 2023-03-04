@@ -64,7 +64,7 @@ module.exports.login = asyncHandler((req, res) => __awaiter(void 0, void 0, void
     }
 }));
 module.exports.users = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { auth } = res.locals.user;
+    const { _id: auth } = res.locals.user;
     const { search, size } = req.query;
     let query = { _id: { $ne: new mongoose_1.default.Types.ObjectId(auth) } };
     if (search)
@@ -97,7 +97,7 @@ module.exports.user = asyncHandler((req, res) => __awaiter(void 0, void 0, void 
     }
 }));
 module.exports.setAvatar = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { auth } = res.locals.user;
+    const { _id: auth } = res.locals.user;
     const { imgUrl } = req.body;
     try {
         yield User.findOneAndUpdate({ _id: auth }, { imgUrl });
@@ -108,7 +108,7 @@ module.exports.setAvatar = asyncHandler((req, res) => __awaiter(void 0, void 0, 
     }
 }));
 module.exports.deleteUser = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { auth } = res.locals.user;
+    const { _id: auth } = res.locals.user;
     try {
         yield User.findOneAndDelete({ _id: auth });
         yield Message.deleteMany({ user: [auth] });
