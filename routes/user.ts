@@ -1,21 +1,29 @@
-import express, { Router } from "express";
+import { Router } from "express";
 const {
   register,
   login,
-  getAllUsers,
+  users,
   setAvatar,
+  user,
   deleteUser,
-  getSingleUser,
 } = require("../controller/user");
+
 const auth = require("../middleware/auth");
 
-const router: Router = express.Router();
+const router = Router();
 
 router.post("/signup", register);
+
 router.post("/login", login);
-router.get("/users/:id", auth, getAllUsers);
-router.get("/user/:id", auth, getSingleUser);
-router.put("/setavatar/:id", auth, setAvatar);
-router.delete("/delete/:id", auth, deleteUser);
+
+router.use(auth);
+
+router.get("/user", users);
+
+router.get("/user/:user", user);
+
+router.put("/avatar/:user", setAvatar);
+
+router.delete("/delete/:user", deleteUser);
 
 module.exports = router;

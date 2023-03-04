@@ -1,54 +1,56 @@
-import Axios from 'axios';
+import Axios from "axios";
 
 const axios = Axios.create();
 
 axios.interceptors.request.use(
   (config) => {
-    const authToken = localStorage.getItem('token');
+    const authToken = localStorage.getItem("token");
 
-    config.headers['Authorization'] = 'Bearer ' + authToken;
+    config.headers["Authorization"] = "Bearer " + authToken;
     return config;
   },
   (error) => Promise.reject(error)
 );
 
 export const auth = async () => {
-  const res = await axios.get('/api/protected');
+  const res = await axios.get("/api/auth");
   return res.data;
 };
 
 export const signup = async (data) => {
-  const res = await axios.post('/api/signup', data);
+  const res = await axios.post("/api/signup", data);
   return res.data;
 };
 
 export const login = async (data) => {
-  const res = await axios.post('/api/login', data);
+  const res = await axios.post("/api/login", data);
   return res.data;
 };
 
-export const getAllUsers = async ({ id, search }) => {
-  const res = await axios.get(`/api/users/${id}?search=${search || ''}`);
+export const getAllUsers = async ({ search, size }) => {
+  const res = await axios.get(
+    `/api/user?search=${search || ""}&size=${size || 20}`
+  );
   return res.data;
 };
 
-export const setAvatar = async ({ id, imgUrl }) => {
-  const res = await axios.put(`/api/setavatar/${id}`, { imgUrl });
+export const setAvatar = async ({ imgUrl }) => {
+  const res = await axios.put(`/api/avatar`, { imgUrl });
   return res.data;
 };
 
-export const deleteUser = async (id) => {
-  const res = await axios.delete(`/api/delete/${id}`);
+export const deleteUser = async () => {
+  const res = await axios.delete(`/api/delete`);
   return res.data;
 };
 
 export const sendMessage = async (data) => {
-  const res = await axios.post('/api/addmsg', data);
+  const res = await axios.post("/api/message", data);
   return res.data;
 };
 
-export const getMessage = async (data) => {
-  const res = await axios.post('/api/getmsg', data);
+export const getMessage = async ({ user, size }) => {
+  const res = await axios.get(`/api/message/${user}?size=${size || 20}`);
   return res.data;
 };
 

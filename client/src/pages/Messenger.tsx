@@ -6,7 +6,7 @@ import Preview from "../components/Preview";
 const Messenger: React.FC = () => {
   const [inboxToggle, setInboxToggle] = useState<boolean>(false);
 
-  const [getId, setGetId] = useState<string>("");
+  const [user, setUser] = useState<string>("");
 
   return (
     <div className="min-h-screen max-w-screen font-sans flex items-center justify-center bg-slate-100 text-black">
@@ -16,11 +16,11 @@ const Messenger: React.FC = () => {
         <Preview
           inboxToggle={inboxToggle}
           setInboxToggle={setInboxToggle}
-          setGetId={setGetId}
+          setUser={setUser}
         />
 
         <Inbox
-          getId={getId}
+          user={user}
           inboxToggle={inboxToggle}
           setInboxToggle={setInboxToggle}
         />

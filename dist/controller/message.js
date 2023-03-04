@@ -11,31 +11,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const asyncHandler = require("express-async-handler");
 const Message = require("../model/message");
-module.exports.getMessage = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { from, to } = req.body;
+module.exports.messages = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { user } = req.params;
+    const { size } = req.query;
+    const { _id: auth } = res.locals.user;
     try {
         const messages = yield Message.find({
             users: {
-                $all: [from, to],
+                $all: [auth.toString(), user],
             },
-        }).sort({ updatedAt: -1 });
-        const messagesData = messages.map((element) => ({
-            self: element.sender.toString() === from.toString(),
-            message: element.message,
-        }));
-        return res.status(201).json(messagesData);
+        })
+            .limit(Number(size || 20))
+            .sort({ updatedAt: -1 });
+        const count = yield Message.countDocuments({
+            users: {
+                $all: [auth.toString(), user],
+            },
+        });
+        return res.status(200).json({ data: messages, count });
     }
     catch (err) {
         return res.status(400).json(err.message);
     }
 }));
-module.exports.addMessage = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { from, to, message } = req.body;
+module.exports.add = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { _id: auth } = res.locals.user;
+    const { to, message } = req.body;
     try {
         yield Message.create({
-            message: message,
-            users: [from, to],
-            sender: from,
+            message,
+            users: [auth, to],
+            sender: auth,
         });
         return res.sendStatus(201);
     }

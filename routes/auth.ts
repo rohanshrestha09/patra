@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-const { messages, add } = require("../controller/message");
+const { authHandler } = require("../controller/auth");
 
 const auth = require("../middleware/auth");
 
@@ -8,8 +8,6 @@ const router = Router();
 
 router.use(auth);
 
-router.get("/message/:user", messages);
-
-router.post("/message", add);
+router.get("/auth", authHandler);
 
 module.exports = router;

@@ -16,6 +16,7 @@
     "daisyui": "^2.17.0",
     "flowbite": "^1.4.7",
     "flowbite-react": "^0.0.26",
+    "react-infinite-scroll-component": "^6.1.0",
     "moment": "^2.29.4",
     "mongoose": "^6.4.0",
     "react": "^18.2.0",

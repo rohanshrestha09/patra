@@ -1,28 +1,26 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Types } from "mongoose";
 import { Avatar, Button, Dropdown, Modal, Spinner } from "flowbite-react";
 import moment from "moment";
 import { Buffer } from "buffer";
 import axios from "axios";
 import { getAllUsers, setAvatar, deleteUser } from "../api";
 import userContext from "../utils/userContext";
+import Skeleton from "./Skeleton";
 
 interface Props {
   inboxToggle: boolean;
   setInboxToggle: React.Dispatch<React.SetStateAction<boolean>>;
-  setGetId: React.Dispatch<React.SetStateAction<string>>;
+  setUser: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Preview: React.FC<Props> = ({
-  inboxToggle,
-  setInboxToggle,
-  setGetId,
-}) => {
+const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
   const { user, userLogout, isSuccess, refetch, isAlert, setIsAlert } =
     useContext<any>(userContext);
 
   const searchRef = useRef<HTMLInputElement>(null);
+
+  const skeletonRef = useRef<HTMLDivElement>(null);
 
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] =
     useState<boolean>(false);
@@ -31,20 +29,32 @@ const Preview: React.FC<Props> = ({
 
   const [avatarImage, setAvatarImage] = useState<string[]>([]);
 
-  const [avatarSelectIndex, setAvatarSelectIndex] = useState<number>(NaN)
+  const [avatarSelectIndex, setAvatarSelectIndex] = useState<number>(NaN);
 
-  let timeout: any = 0
+  const [size, setSize] = useState(20);
+
+  let timeout: any = 0;
 
   const {
-    data: allUsers,
+    data: users,
     isLoading: isPreviewLoading,
-    isRefetching: isPreviewRefetching,
+    isPreviousData: isPreviewFetching,
     refetch: refetchAllUsers,
   } = useQuery({
-    queryFn: () => getAllUsers({ id: user && user._id, search: searchRef.current?.value }),
-    queryKey: ["allUsersData", searchRef.current?.value],
+    queryFn: () => getAllUsers({ search: searchRef.current?.value, size }),
+    queryKey: ["allUsersData", searchRef.current?.value, size],
     enabled: !!isSuccess,
+    keepPreviousData: true,
   });
+
+  useEffect(() => {
+    if (skeletonRef.current)
+      skeletonRef.current.scrollIntoView({
+        behavior: "smooth",
+      });
+    refetchAllUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [size]);
 
   const { isLoading: isAvatarLoading } = useQuery({
     queryFn: async () => {
@@ -65,8 +75,7 @@ const Preview: React.FC<Props> = ({
   });
 
   const handleSetAvatar = useMutation(
-    ({ id, imgUrl }: { id: string | Types.ObjectId; imgUrl: string }) =>
-      setAvatar({ id, imgUrl }),
+    ({ imgUrl }: { imgUrl: string }) => setAvatar({ imgUrl }),
     {
       onSuccess: (res) => {
         refetchAllUsers();
@@ -89,7 +98,7 @@ const Preview: React.FC<Props> = ({
     }
   );
 
-  const handleDeleteUser = useMutation((id: string) => deleteUser(id), {
+  const handleDeleteUser = useMutation(() => deleteUser(), {
     onSuccess: (res) => {
       userLogout();
       setIsDeleteUserModalOpen(false);
@@ -111,8 +120,9 @@ const Preview: React.FC<Props> = ({
 
   return (
     <div
-      className={`${inboxToggle ? "hidden" : "flex"
-        } h-full md:col-span-2 col-span-full md:flex flex-col gap-2 drop-shadow-lg z-10`}
+      className={`${
+        inboxToggle ? "hidden" : "flex"
+      } h-full md:col-span-2 col-span-full md:flex flex-col gap-2 drop-shadow-lg z-10`}
     >
       <div className="w-full basis-20 flex justify-between items-center rounded-tl-lg px-4 shadow-lg">
         <p className="font-dev text-[#FF6A3D] text-7xl">kq</p>
@@ -185,9 +195,10 @@ const Preview: React.FC<Props> = ({
                       src={`data:image/svg+xml;base64,${element}`}
                       alt="avatar"
                       key={index}
-                      className={`w-12 h-12 md:w-16 md:h-16 p-[0.2rem] rounded-full cursor-pointer ${index === avatarSelectIndex &&
+                      className={`w-12 h-12 md:w-16 md:h-16 p-[0.2rem] rounded-full cursor-pointer ${
+                        index === avatarSelectIndex &&
                         "border-[0.25rem] border-[#4e0eff]"
-                        }`}
+                      }`}
                       onClick={(): void => setAvatarSelectIndex(index)}
                     />
                   ))
@@ -198,7 +209,6 @@ const Preview: React.FC<Props> = ({
               <Button
                 onClick={() =>
                   handleSetAvatar.mutate({
-                    id: user._id,
                     imgUrl: avatarImage[avatarSelectIndex],
                   })
                 }
@@ -227,12 +237,7 @@ const Preview: React.FC<Props> = ({
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button
-                onClick={() => {
-                  handleDeleteUser.mutate(user._id);
-                }}
-                color="failure"
-              >
+              <Button onClick={() => handleDeleteUser.mutate()} color="failure">
                 Delete Account
               </Button>
               <Button
@@ -254,51 +259,61 @@ const Preview: React.FC<Props> = ({
           className="w-full rounded-xl focus:outline-none focus:border-0 border-0"
           onChange={() => {
             if (timeout) clearTimeout(timeout);
-            timeout = setTimeout(refetchAllUsers, 500)
+            timeout = setTimeout(refetchAllUsers, 500);
           }}
         />
       </div>
 
       <div
-        className={`basis-[80%] flex flex-col overflow-scroll overflow-x-hidden px-3 ${(isPreviewLoading || isPreviewRefetching) && "items-center justify-center"
-          }`}
+        className={`basis-[80%] flex flex-col overflow-scroll overflow-x-hidden px-3`}
       >
-        {(isPreviewLoading || isPreviewRefetching) ? (
-          <Spinner size={"xl"} />
-        ) : (
-          <>
-            {allUsers &&
-              allUsers.map((element: any, index: number) => (
-                <div
-                  className="w-full flex justify-between items-start px-3 my-1 py-3 cursor-pointer rounded-lg hover:bg-gray-50"
-                  key={index}
-                  onClick={(): void => {
-                    setInboxToggle(true);
-                    setGetId(element._id);
-                  }}
+        {isPreviewLoading
+          ? Array.from({ length: 12 }).map((_, i) => <Skeleton key={i} />)
+          : users &&
+            users.data.map((user: any, index: number) => (
+              <div
+                className="w-full flex justify-between items-start px-3 my-1 py-3 cursor-pointer rounded-lg hover:bg-gray-50"
+                key={index}
+                onClick={() => {
+                  setInboxToggle(true);
+                  setUser(user._id);
+                }}
+              >
+                <Avatar
+                  img={
+                    user.imgUrl && `data:image/svg+xml;base64,${user.imgUrl}`
+                  }
+                  rounded={true}
+                  status="online"
+                  statusPosition="bottom-right"
                 >
-                  <Avatar
-                    img={
-                      element.imgUrl &&
-                      `data:image/svg+xml;base64,${element.imgUrl}`
-                    }
-                    rounded={true}
-                    status="online"
-                    statusPosition="bottom-right"
-                  >
-                    <div className="space-y-1 font-medium w-40">
-                      <div className="truncate">{element.fullname}</div>
-                      <div className="text-sm text-gray-500 truncate">
-                        {element.email}
-                      </div>
+                  <div className="space-y-1 font-medium w-40">
+                    <div className="truncate">{user.fullname}</div>
+                    <div className="text-sm text-gray-500 truncate">
+                      {user.email}
                     </div>
-                  </Avatar>
-                  <div className="text-gray-500 text-xs py-1">
-                    {moment(element.createdAt).format("ll").slice(0, -6)}
                   </div>
+                </Avatar>
+                <div className="text-gray-500 text-xs py-1">
+                  {moment(user.createdAt).format("ll").slice(0, -6)}
                 </div>
-              ))}
-          </>
+              </div>
+            ))}
+
+        {isPreviewFetching ? (
+          <div ref={skeletonRef}>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Skeleton key={i} />
+            ))}
+          </div>
+        ) : (
+          users?.data.length < users?.count && (
+            <div className="flex w-full items-center justify-center mt-2">
+              <Button onClick={() => setSize((prev) => prev + 10)}>
+                Load more
+              </Button>
+            </div>
+          )
         )}
       </div>
     </div>
