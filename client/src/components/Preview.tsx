@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Avatar, Button, Dropdown, Modal, Spinner } from "flowbite-react";
 import moment from "moment";
 import { Buffer } from "buffer";
@@ -7,6 +7,7 @@ import axios from "axios";
 import { getAllUsers, setAvatar, deleteUser } from "../api";
 import userContext from "../utils/userContext";
 import Skeleton from "./Skeleton";
+import { AUTH, GET_USERS } from "../constant";
 
 interface Props {
   inboxToggle: boolean;
@@ -15,8 +16,9 @@ interface Props {
 }
 
 const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
-  const { user, userLogout, isSuccess, refetch, isAlert, setIsAlert } =
-    useContext<any>(userContext);
+  const { user: authUser, userLogout, setAlert } = useContext(userContext);
+
+  const queryClient = useQueryClient();
 
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -42,8 +44,7 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
     refetch: refetchAllUsers,
   } = useQuery({
     queryFn: () => getAllUsers({ search: searchRef.current?.value, size }),
-    queryKey: ["allUsersData", searchRef.current?.value, size],
-    enabled: !!isSuccess,
+    queryKey: [GET_USERS, searchRef.current?.value, size],
     keepPreviousData: true,
   });
 
@@ -79,18 +80,16 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
     {
       onSuccess: (res) => {
         refetchAllUsers();
-        refetch();
+        queryClient.refetchQueries([AUTH]);
         setIsAvatarModalOpen(false);
-        setIsAlert({
-          ...isAlert,
+        setAlert({
           isOpen: true,
           title: res.message,
           type: "success",
         });
       },
       onError: (err: any) =>
-        setIsAlert({
-          ...isAlert,
+        setAlert({
           isOpen: true,
           title: err.response.data,
           type: "failure",
@@ -102,16 +101,14 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
     onSuccess: (res) => {
       userLogout();
       setIsDeleteUserModalOpen(false);
-      setIsAlert({
-        ...isAlert,
+      setAlert({
         isOpen: true,
         title: res.message,
         type: "success",
       });
     },
     onError: (err: any) =>
-      setIsAlert({
-        ...isAlert,
+      setAlert({
         isOpen: true,
         title: err.response.data,
         type: "failure",
@@ -135,8 +132,8 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
               <Avatar
                 className="absolute -z-10 text-[#ff6a3d] pointer-events-none"
                 img={
-                  user && user.imgUrl
-                    ? `data:image/svg+xml;base64,${user.imgUrl}`
+                  authUser && authUser.imgUrl
+                    ? `data:image/svg+xml;base64,${authUser.imgUrl}`
                     : undefined
                 }
                 rounded={true}
@@ -150,10 +147,10 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
             >
               <Dropdown.Header>
                 <span className="block text-sm truncate">
-                  {user && user.fullname}
+                  {authUser && authUser.fullname}
                 </span>
                 <span className="block truncate text-sm font-medium">
-                  {user && user.email}
+                  {authUser && authUser.email}
                 </span>
               </Dropdown.Header>
 
@@ -175,7 +172,7 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
         </div>
       </div>
 
-      {user && (
+      {authUser && (
         <>
           <Modal
             show={isAvatarModalOpen}
@@ -270,7 +267,7 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
         {isPreviewLoading
           ? Array.from({ length: 12 }).map((_, i) => <Skeleton key={i} />)
           : users &&
-            users.data.map((user: any, index: number) => (
+            users.data.map((user: typeof authUser, index: number) => (
               <div
                 className="w-full flex justify-between items-start px-3 my-1 py-3 cursor-pointer rounded-lg hover:bg-gray-50"
                 key={index}

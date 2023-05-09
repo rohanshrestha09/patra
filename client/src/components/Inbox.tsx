@@ -9,6 +9,7 @@ import userContext from "../utils/userContext";
 import { getMessage, getUserById, sendMessage } from "../api";
 import emojiArr from "./emoji";
 import Skeleton from "./Skeleton";
+import { GET_MESSAGES, GET_USER_BY_ID } from "../constant";
 
 interface Props {
   inboxToggle: boolean;
@@ -23,7 +24,7 @@ const Inbox: React.FC<Props> = ({
 }) => {
   const [socket, setSocket] = useState<any>(null);
 
-  const { user } = useContext<any>(userContext);
+  const { user } = useContext(userContext);
 
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +53,7 @@ const Inbox: React.FC<Props> = ({
     // eslint-disable-next-line
   }, [socket]);
 
-  const onChange = (e: React.SyntheticEvent): void => {
+  const onChange = (e: React.SyntheticEvent) => {
     const { value } = e.target as HTMLButtonElement;
     setMessage(value);
   };
@@ -63,7 +64,7 @@ const Inbox: React.FC<Props> = ({
     refetch: refetchMessages,
   } = useQuery({
     queryFn: () => getMessage({ user: userId, size }),
-    queryKey: ["getMessage", userId, size],
+    queryKey: [GET_MESSAGES, userId, size],
     enabled: !!userId,
     onSuccess: (messages) => {
       setClientMessages(messages.data);
@@ -91,7 +92,7 @@ const Inbox: React.FC<Props> = ({
 
   const { data: receiverProfile, isLoading: isUserLoading } = useQuery({
     queryFn: () => getUserById(userId),
-    queryKey: ["getUserById", userId],
+    queryKey: [GET_USER_BY_ID, userId],
     enabled: !!userId,
   });
 
@@ -124,7 +125,7 @@ const Inbox: React.FC<Props> = ({
         <IoIosArrowBack
           size={25}
           className="text-slate-700 cursor-pointer"
-          onClick={(): void => setInboxToggle(false)}
+          onClick={() => setInboxToggle(false)}
         />
 
         <div className="basis-3/4">
@@ -234,7 +235,7 @@ const Inbox: React.FC<Props> = ({
       <div className="w-full basis-24 flex items-center justify-center px-6">
         <form
           className="w-full h-12 flex items-center justify-between px-4 rounded-full border border-slate-400"
-          onSubmit={(event: React.SyntheticEvent) => {
+          onSubmit={(event) => {
             if (message) {
               event.preventDefault();
               handleSendMessage.mutate({

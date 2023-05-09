@@ -4,27 +4,27 @@ import { HiInformationCircle } from "react-icons/hi";
 import userContext from "../utils/userContext";
 
 const OpenNotification: React.FC = () => {
-  const { isAlert, setIsAlert } = useContext<any>(userContext);
+  const { alert, setAlert } = useContext(userContext);
 
-  if (isAlert.isOpen)
+  if (alert.isOpen)
     setTimeout(() => {
-      setIsAlert({ ...isAlert, isOpen: false });
+      setAlert({ ...alert, isOpen: false });
     }, 3000);
 
   return (
     <div
       className={`w-11/12 md:w-[60rem] ${
-        isAlert.isOpen
+        alert.isOpen
           ? "opacity-1 pointer-events-auto"
           : "opacity-0 pointer-events-none"
       } absolute top-0 z-50 transition-all`}
     >
       <Alert
-        color={isAlert.type}
+        color={alert.type}
         icon={HiInformationCircle}
-        onDismiss={() => setIsAlert({ ...isAlert, isOpen: false })}
+        onDismiss={() => alert({ ...alert, isOpen: false })}
       >
-        <span className="font-medium">{isAlert.title}</span>
+        <span className="font-medium">{alert.title}</span>
       </Alert>
     </div>
   );

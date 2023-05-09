@@ -11,16 +11,13 @@ interface context {
     imgUrl: string;
     updatedAt: string;
   };
-  refetch: any;
-  isSuccess: boolean;
-  isFetching: boolean;
   userLogout: () => void;
-  isAlert: { isOpen: boolean; title: string; type: string };
-  setIsAlert: React.Dispatch<
+  alert: { isOpen: boolean; title: string; type: string };
+  setAlert: React.Dispatch<
     React.SetStateAction<{ isOpen: boolean; title: string; type: string }>
   >;
 }
 
-const userContext = createContext<context | null>(null);
+const userContext = createContext<context | any>(null);
 
 export default userContext;

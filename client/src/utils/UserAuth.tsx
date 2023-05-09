@@ -1,50 +1,41 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../api';
-import UserContext from './userContext';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../api";
+import UserContext from "./userContext";
+import { AUTH } from "../constant";
 
-const UserAuth: React.FC<{ children: React.ReactNode }> = ({ children }): JSX.Element => {
+const UserAuth: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}): JSX.Element => {
   const navigate = useNavigate();
 
-  const [isAlert, setIsAlert] = useState<{
-    isOpen: boolean;
-    title: string;
-    type: string;
-  }>({
+  const [alert, setAlert] = useState({
     isOpen: false,
-    title: '',
-    type: '',
+    title: "",
+    type: "",
   });
 
-  const {
-    data: user,
-    refetch,
-    isSuccess,
-    isFetching,
-  } = useQuery({
-    queryFn: () => auth(),
-    queryKey: ['authorization'],
+  const { data: user, refetch } = useQuery({
+    queryFn: auth,
+    queryKey: [AUTH],
     retry: false,
-    onError: () => navigate('/signup'),
+    onError: () => navigate("/signup"),
   });
 
-  const userLogout = (): void => {
-    localStorage.removeItem('token');
+  const userLogout = () => {
+    localStorage.removeItem("token");
     refetch();
-    navigate('/signup');
+    navigate("/signup");
   };
 
   return (
     <UserContext.Provider
       value={{
         user,
-        refetch,
         userLogout,
-        isSuccess,
-        isFetching,
-        setIsAlert,
-        isAlert,
+        alert,
+        setAlert,
       }}
     >
       {children}

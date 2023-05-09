@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
 import SignupForm from "../components/SignupForm";
@@ -7,48 +7,38 @@ import LoginForm from "../components/LoginForm";
 import userContext from "../utils/userContext";
 import OpenNotification from "../components/OpenNotification";
 import { login, signup } from "../api";
+import { AUTH } from "../constant";
 
 const Signup: React.FC = () => {
-  const { refetch, isAlert, setIsAlert } = useContext<any>(userContext);
+  const { setAlert } = useContext(userContext);
+
+  const queryClient = useQueryClient();
 
   const navigate = useNavigate();
 
   const [isLoginToggled, setIsLoginToggled] = useState<boolean>(false);
 
-  interface signup {
-    fullname: string;
-    email: string;
-    password: string;
-    confirmpassword: string;
-  }
-
-  interface login {
-    email: string;
-    password: string;
-  }
-
-  const [signupInfo, setSignupInfo] = useState<signup>({
+  const [signupInfo, setSignupInfo] = useState({
     fullname: "",
     email: "",
     password: "",
     confirmpassword: "",
   });
 
-  const [loginInfo, setLoginInfo] = useState<login>({
+  const [loginInfo, setLoginInfo] = useState({
     email: "",
     password: "",
   });
 
   const redirection = (token: string) => {
     localStorage.setItem("token", token);
-    refetch();
+    queryClient.refetchQueries([AUTH]);
     navigate("/");
   };
 
-  const handleLogin = useMutation((data: login) => login(data), {
+  const handleLogin = useMutation(login, {
     onSuccess: (res) => {
-      setIsAlert({
-        ...isAlert,
+      setAlert({
         isOpen: true,
         title: res.message,
         type: "success",
@@ -56,18 +46,16 @@ const Signup: React.FC = () => {
       redirection(res.token);
     },
     onError: (err: any) =>
-      setIsAlert({
-        ...isAlert,
+      setAlert({
         isOpen: true,
         title: err.response.data,
         type: "failure",
       }),
   });
 
-  const handleSignup = useMutation((data: signup) => signup(data), {
+  const handleSignup = useMutation(signup, {
     onSuccess: (res) => {
-      setIsAlert({
-        ...isAlert,
+      setAlert({
         isOpen: true,
         title: res.message,
         type: "success",
@@ -75,8 +63,7 @@ const Signup: React.FC = () => {
       redirection(res.token);
     },
     onError: (err: any) =>
-      setIsAlert({
-        ...isAlert,
+      setAlert({
         isOpen: true,
         title: err.response.data,
         type: "failure",
@@ -109,7 +96,7 @@ const Signup: React.FC = () => {
         <div className="h-full md:w-[59.33%] w-full flex items-center justify-center bg-[white] md:rounded-r-lg md:rounded-bl-none">
           <form
             className="w-5/6 h-5/6 flex flex-col justify-between items-center"
-            onSubmit={(event: React.SyntheticEvent): void => {
+            onSubmit={(event: React.SyntheticEvent) => {
               event.preventDefault();
               isLoginToggled
                 ? handleLogin.mutate(loginInfo)
@@ -121,7 +108,7 @@ const Signup: React.FC = () => {
                 className={`${
                   isLoginToggled ? "text-gray-300" : "text-[#1A2238]"
                 } cursor-pointer`}
-                onClick={(): void => setIsLoginToggled(false)}
+                onClick={() => setIsLoginToggled(false)}
               >
                 Sign up
               </p>

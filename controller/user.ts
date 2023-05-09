@@ -36,7 +36,7 @@ module.exports.register = asyncHandler(
 
       return res.status(200).json({ message: "Signup Successful", token });
     } catch (error: any) {
-      return res.status(400).json(error.message);
+      return res.status(500).json(error.message);
     }
   }
 );
@@ -59,9 +59,9 @@ module.exports.login = asyncHandler(
       });
 
       if (isMatched)
-        return res.status(200).json({ message: "Login Successful", token });
+        return res.status(201).json({ message: "Login Successful", token });
     } catch (error: any) {
-      return res.status(400).json(error.message);
+      return res.status(500).json(error.message);
     }
   }
 );
@@ -93,9 +93,9 @@ module.exports.users = asyncHandler(
 
       const count = await User.countDocuments({});
 
-      return res.status(201).json({ data: users, count });
+      return res.status(200).json({ data: users, count });
     } catch (err: any) {
-      return res.status(400).json(err.message);
+      return res.status(500).json(err.message);
     }
   }
 );
@@ -109,9 +109,9 @@ module.exports.user = asyncHandler(
         new mongoose.Types.ObjectId(user)
       ).select("-password");
 
-      return res.status(201).json(singleUser);
+      return res.status(200).json(singleUser);
     } catch (err: any) {
-      return res.sendStatus(400).json(err.message);
+      return res.sendStatus(500).json(err.message);
     }
   }
 );
@@ -127,7 +127,7 @@ module.exports.setAvatar = asyncHandler(
 
       return res.status(201).json({ message: "Avatar Setup Successful" });
     } catch (err: any) {
-      return res.status(400).json(err.message);
+      return res.status(500).json(err.message);
     }
   }
 );
@@ -143,7 +143,7 @@ module.exports.deleteUser = asyncHandler(
 
       return res.status(201).json({ message: "Account deletion successful" });
     } catch (err: any) {
-      return res.status(400).json(err.message);
+      return res.status(500).json(err.message);
     }
   }
 );
