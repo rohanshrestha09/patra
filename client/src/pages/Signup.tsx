@@ -2,10 +2,10 @@ import React, { useContext, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
-import SignupForm from "../components/SignupForm";
-import LoginForm from "../components/LoginForm";
+import SignupForm from "../components/Form/SignupForm";
+import LoginForm from "../components/Form/LoginForm";
 import userContext from "../utils/userContext";
-import OpenNotification from "../components/OpenNotification";
+import OpenNotification from "../components/shared/Notification";
 import { login, signup } from "../api";
 import { AUTH } from "../constant";
 
@@ -105,18 +105,16 @@ const Signup: React.FC = () => {
           >
             <div className="self-start flex justify-between text-sm font-semibold">
               <p
-                className={`${
-                  isLoginToggled ? "text-gray-300" : "text-[#1A2238]"
-                } cursor-pointer`}
+                className={`${isLoginToggled ? "text-gray-300" : "text-[#1A2238]"
+                  } cursor-pointer`}
                 onClick={() => setIsLoginToggled(false)}
               >
                 Sign up
               </p>
               <p className="px-1 text-gray-300">/</p>
               <p
-                className={`${
-                  isLoginToggled ? "text-[#1A2238]" : "text-gray-300"
-                } cursor-pointer`}
+                className={`${isLoginToggled ? "text-[#1A2238]" : "text-gray-300"
+                  } cursor-pointer`}
                 onClick={(): void => setIsLoginToggled(true)}
               >
                 Login
@@ -126,16 +124,14 @@ const Signup: React.FC = () => {
             <div className="w-full h-2/3 flex justify-between">
               <div className="w-2/5 h-full flex flex-col justify-between">
                 <p
-                  className={`text-[#1A2238] font-semibold md:text-base text-sm ${
-                    isLoginToggled && "absolute"
-                  }`}
+                  className={`text-[#1A2238] font-semibold md:text-base text-sm ${isLoginToggled && "absolute"
+                    }`}
                 >
                   {isLoginToggled ? "LogIn" : "Signup"}
                 </p>
                 <div
-                  className={`w-full ${
-                    isLoginToggled && "h-full flex flex-col justify-center"
-                  }`}
+                  className={`w-full ${isLoginToggled && "h-full flex flex-col justify-center"
+                    }`}
                 >
                   {isLoginToggled ? (
                     <LoginForm onChange={onChange} loginInfo={loginInfo} />

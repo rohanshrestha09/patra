@@ -31,7 +31,7 @@ module.exports.messages = asyncHandler((req, res) => __awaiter(void 0, void 0, v
         return res.status(200).json({ data: messages, count });
     }
     catch (err) {
-        return res.status(400).json(err.message);
+        return res.status(500).json(err.message);
     }
 }));
 module.exports.add = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,6 +46,6 @@ module.exports.add = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0
         return res.sendStatus(201);
     }
     catch (err) {
-        return res.status(400).json(err.message);
+        return res.status(500).json(err.message);
     }
 }));

@@ -41,7 +41,7 @@ module.exports.register = asyncHandler((req, res) => __awaiter(void 0, void 0, v
         return res.status(200).json({ message: "Signup Successful", token });
     }
     catch (error) {
-        return res.status(400).json(error.message);
+        return res.status(500).json(error.message);
     }
 }));
 module.exports.login = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,10 +57,10 @@ module.exports.login = asyncHandler((req, res) => __awaiter(void 0, void 0, void
             expiresIn: "30d",
         });
         if (isMatched)
-            return res.status(200).json({ message: "Login Successful", token });
+            return res.status(201).json({ message: "Login Successful", token });
     }
     catch (error) {
-        return res.status(400).json(error.message);
+        return res.status(500).json(error.message);
     }
 }));
 module.exports.users = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -80,20 +80,20 @@ module.exports.users = asyncHandler((req, res) => __awaiter(void 0, void 0, void
             .limit(Number(size || 20))
             .sort({ createdAt: 1 });
         const count = yield User.countDocuments({});
-        return res.status(201).json({ data: users, count });
+        return res.status(200).json({ data: users, count });
     }
     catch (err) {
-        return res.status(400).json(err.message);
+        return res.status(500).json(err.message);
     }
 }));
 module.exports.user = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { user } = req.params;
     try {
         const singleUser = yield User.findById(new mongoose_1.default.Types.ObjectId(user)).select("-password");
-        return res.status(201).json(singleUser);
+        return res.status(200).json(singleUser);
     }
     catch (err) {
-        return res.sendStatus(400).json(err.message);
+        return res.sendStatus(500).json(err.message);
     }
 }));
 module.exports.setAvatar = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -104,7 +104,7 @@ module.exports.setAvatar = asyncHandler((req, res) => __awaiter(void 0, void 0, 
         return res.status(201).json({ message: "Avatar Setup Successful" });
     }
     catch (err) {
-        return res.status(400).json(err.message);
+        return res.status(500).json(err.message);
     }
 }));
 module.exports.deleteUser = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -115,6 +115,6 @@ module.exports.deleteUser = asyncHandler((req, res) => __awaiter(void 0, void 0,
         return res.status(201).json({ message: "Account deletion successful" });
     }
     catch (err) {
-        return res.status(400).json(err.message);
+        return res.status(500).json(err.message);
     }
 }));

@@ -4,10 +4,10 @@ import { Avatar, Button, Dropdown, Modal, Spinner } from "flowbite-react";
 import moment from "moment";
 import { Buffer } from "buffer";
 import axios from "axios";
-import { getAllUsers, setAvatar, deleteUser } from "../api";
-import userContext from "../utils/userContext";
-import Skeleton from "./Skeleton";
-import { AUTH, GET_USERS } from "../constant";
+import { getAllUsers, setAvatar, deleteUser } from "../../api";
+import userContext from "../../utils/userContext";
+import Skeleton from "../shared/Skeleton";
+import { AUTH, GET_USERS } from "../../constant";
 
 interface Props {
   inboxToggle: boolean;
@@ -117,9 +117,8 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
 
   return (
     <div
-      className={`${
-        inboxToggle ? "hidden" : "flex"
-      } h-full md:col-span-2 col-span-full md:flex flex-col gap-2 drop-shadow-lg z-10`}
+      className={`${inboxToggle ? "hidden" : "flex"
+        } h-full md:col-span-2 col-span-full md:flex flex-col gap-2 drop-shadow-lg z-10`}
     >
       <div className="w-full basis-20 flex justify-between items-center rounded-tl-lg px-4 shadow-lg">
         <p className="font-dev text-[#FF6A3D] text-7xl">kq</p>
@@ -192,10 +191,9 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
                       src={`data:image/svg+xml;base64,${element}`}
                       alt="avatar"
                       key={index}
-                      className={`w-12 h-12 md:w-16 md:h-16 p-[0.2rem] rounded-full cursor-pointer ${
-                        index === avatarSelectIndex &&
+                      className={`w-12 h-12 md:w-16 md:h-16 p-[0.2rem] rounded-full cursor-pointer ${index === avatarSelectIndex &&
                         "border-[0.25rem] border-[#4e0eff]"
-                      }`}
+                        }`}
                       onClick={(): void => setAvatarSelectIndex(index)}
                     />
                   ))
@@ -267,35 +265,35 @@ const Preview: React.FC<Props> = ({ inboxToggle, setInboxToggle, setUser }) => {
         {isPreviewLoading
           ? Array.from({ length: 12 }).map((_, i) => <Skeleton key={i} />)
           : users &&
-            users.data.map((user: typeof authUser, index: number) => (
-              <div
-                className="w-full flex justify-between items-start px-3 my-1 py-3 cursor-pointer rounded-lg hover:bg-gray-50"
-                key={index}
-                onClick={() => {
-                  setInboxToggle(true);
-                  setUser(user._id);
-                }}
+          users.data.map((user: typeof authUser, index: number) => (
+            <div
+              className="w-full flex justify-between items-start px-3 my-1 py-3 cursor-pointer rounded-lg hover:bg-gray-50"
+              key={index}
+              onClick={() => {
+                setInboxToggle(true);
+                setUser(user._id);
+              }}
+            >
+              <Avatar
+                img={
+                  user.imgUrl && `data:image/svg+xml;base64,${user.imgUrl}`
+                }
+                rounded={true}
+                status="online"
+                statusPosition="bottom-right"
               >
-                <Avatar
-                  img={
-                    user.imgUrl && `data:image/svg+xml;base64,${user.imgUrl}`
-                  }
-                  rounded={true}
-                  status="online"
-                  statusPosition="bottom-right"
-                >
-                  <div className="space-y-1 font-medium w-40">
-                    <div className="truncate">{user.fullname}</div>
-                    <div className="text-sm text-gray-500 truncate">
-                      {user.email}
-                    </div>
+                <div className="space-y-1 font-medium w-40">
+                  <div className="truncate">{user.fullname}</div>
+                  <div className="text-sm text-gray-500 truncate">
+                    {user.email}
                   </div>
-                </Avatar>
-                <div className="text-gray-500 text-xs py-1">
-                  {moment(user.createdAt).format("ll").slice(0, -6)}
                 </div>
+              </Avatar>
+              <div className="text-gray-500 text-xs py-1">
+                {moment(user.createdAt).format("ll").slice(0, -6)}
               </div>
-            ))}
+            </div>
+          ))}
 
         {isPreviewFetching ? (
           <div ref={skeletonRef}>

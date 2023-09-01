@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const moment = require("moment");
 const UserSchema = new mongoose_1.default.Schema({
     fullname: {
         type: String,
@@ -23,10 +22,6 @@ const UserSchema = new mongoose_1.default.Schema({
     imgUrl: {
         type: String,
         default: "",
-    },
-    creation: {
-        type: String,
-        default: moment().format("MMMM Do YYYY, h:mm:ss a"),
     },
 }, {
     timestamps: true,

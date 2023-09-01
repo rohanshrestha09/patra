@@ -9,25 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const asyncHandler = require('express-async-handler');
-const jwt = require('jsonwebtoken');
-const User = require('../model/user');
+const asyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+const User = require("../model/user");
 module.exports = asyncHandler((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const [_, token] = ((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.startsWith('Bearer'))
-        ? req.headers.authorization.split(' ')
+    const [_, token] = ((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.startsWith("Bearer"))
+        ? req.headers.authorization.split(" ")
         : [];
     if (!token)
-        return res.status(400).json('Not authorised');
+        return res.status(401).json("Not authorised");
     try {
         const decoded = jwt.verify(token, process.env.JWT_TOKEN);
-        const user = yield User.findById(decoded.id).select('-password');
+        const user = yield User.findById(decoded.id).select("-password");
         if (!user)
-            return res.status(404).json('Not found');
+            return res.status(404).json("Not found");
         res.locals.user = user;
         next();
     }
     catch (err) {
-        return res.status(401).json('Unauthorized');
+        return res.status(401).json("Unauthorized");
     }
 }));

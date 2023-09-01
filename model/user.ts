@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-const moment = require("moment");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -20,10 +19,6 @@ const UserSchema = new mongoose.Schema(
     imgUrl: {
       type: String,
       default: "",
-    },
-    creation: {
-      type: String,
-      default: moment().format("MMMM Do YYYY, h:mm:ss a"),
     },
   },
   {

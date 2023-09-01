@@ -5,11 +5,11 @@ import { Avatar, Button, Dropdown, Spinner } from "flowbite-react";
 import { IoIosArrowBack, IoIosCall, IoMdSend } from "react-icons/io";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { BsEmojiHeartEyesFill } from "react-icons/bs";
-import userContext from "../utils/userContext";
-import { getMessage, getUserById, sendMessage } from "../api";
-import emojiArr from "./emoji";
-import Skeleton from "./Skeleton";
-import { GET_MESSAGES, GET_USER_BY_ID } from "../constant";
+import userContext from "../../utils/userContext";
+import { getMessage, getUserById, sendMessage } from "../../api";
+import emojiArr from "../shared/emoji";
+import Skeleton from "../shared/Skeleton";
+import { GET_MESSAGES, GET_USER_BY_ID } from "../../constant";
 
 interface Props {
   inboxToggle: boolean;
@@ -117,9 +117,8 @@ const Inbox: React.FC<Props> = ({
 
   return (
     <div
-      className={`${
-        inboxToggle ? "flex" : "hidden"
-      } h-full md:col-span-4 col-span-full md:flex flex-col justify-between drop-shadow-lg rounded-lg shadow-lg shadow-slate-400`}
+      className={`${inboxToggle ? "flex" : "hidden"
+        } h-full md:col-span-4 col-span-full md:flex flex-col justify-between drop-shadow-lg rounded-lg shadow-lg shadow-slate-400`}
     >
       <div className="w-full basis-20 flex justify-between items-center rounded-tl-lg px-6 shadow-lg">
         <IoIosArrowBack
@@ -180,9 +179,8 @@ const Inbox: React.FC<Props> = ({
               clientMessages.map(({ sender, message }: any, index: number) => (
                 <div className="w-full flex flex-col" key={index}>
                   <div
-                    className={`items-end mt-3 ${
-                      !(sender === user._id) ? "flex" : "hidden"
-                    }`}
+                    className={`items-end mt-3 ${!(sender === user._id) ? "flex" : "hidden"
+                      }`}
                   >
                     <div className="mr-2">
                       <Avatar
@@ -200,9 +198,8 @@ const Inbox: React.FC<Props> = ({
                     </div>
                   </div>
                   <div
-                    className={`${
-                      sender === user._id ? "block" : "hidden"
-                    } min-h-fit md:max-w-[45%] max-w-[65%] mt-3 bg-[#1a2238] text-white py-[14px] px-[18px] rounded-3xl rounded-br-none md:text-sm text-xs self-end break-words block`}
+                    className={`${sender === user._id ? "block" : "hidden"
+                      } min-h-fit md:max-w-[45%] max-w-[65%] mt-3 bg-[#1a2238] text-white py-[14px] px-[18px] rounded-3xl rounded-br-none md:text-sm text-xs self-end break-words block`}
                   >
                     {message}
                   </div>
@@ -246,9 +243,8 @@ const Inbox: React.FC<Props> = ({
           }}
         >
           <div
-            className={`absolute max-h-72 overflow-scroll overflow-x-hidden bottom-20 ${
-              hideEmoji ? "hidden" : "grid"
-            } grid-rows-auto grid-cols-6 p-1 rounded-2xl rounded-bl-none bg-slate-50 list-none`}
+            className={`absolute max-h-72 overflow-scroll overflow-x-hidden bottom-20 ${hideEmoji ? "hidden" : "grid"
+              } grid-rows-auto grid-cols-6 p-1 rounded-2xl rounded-bl-none bg-slate-50 list-none`}
           >
             {emojiArr.map((emoji, index) => (
               <li
@@ -276,9 +272,8 @@ const Inbox: React.FC<Props> = ({
 
           <IoMdSend
             size={28}
-            className={`${
-              handleSendMessage.isLoading && "pointer-events-none"
-            } cursor-pointer text-[#1a2238]`}
+            className={`${handleSendMessage.isLoading && "pointer-events-none"
+              } cursor-pointer text-[#1a2238]`}
             onClick={(event) => {
               if (message) {
                 event.preventDefault();

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Inbox from "../components/Inbox";
-import OpenNotification from "../components/OpenNotification";
-import Preview from "../components/Preview";
+import Inbox from "../components/Messenger/Inbox";
+import OpenNotification from "../components/shared/Notification";
+import Preview from "../components/Messenger/Preview";
 
 const Messenger: React.FC = () => {
   const [inboxToggle, setInboxToggle] = useState<boolean>(false);

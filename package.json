@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node dist/server.js",
-    "build": "npm install && cd client && npm install && npm run build"
+    "build": "npm install && tsc --project tsconfig.json && cd client && npm install && npm run build"
   },
   "dependencies": {
     "@types/express": "^4.17.13",
@@ -16,7 +16,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-async-handler": "^1.2.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
     "moment": "^2.29.4",
     "mongoose": "^6.3.6",
     "socket.io": "^4.5.1"
